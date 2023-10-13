@@ -10,7 +10,8 @@
 
       var form = document.getElementById("form")
       var input = document.getElementById("input")
-
+      
+      // fungsi ketika submit message (pusher/broadcast)
       form.addEventListener("submit", function (e) {
         e.preventDefault()
         if (input.value) {
@@ -18,7 +19,7 @@
           input.value = ""
         }
       })
-
+      // fungsi ketika mendapatkan reply (listener/subscribe)
       socket.on("reply", function (msg) {
         var item = document.createElement("li")
         item.textContent = msg
