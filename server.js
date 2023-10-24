@@ -6,6 +6,8 @@ const { createServer } = require("http");
 const server = http.createServer(app); 
 const httpServer = createServer(app); 
 const Pusher = require("pusher");
+const lineReader = require('line-reader');
+const axios = require('axios');
 
 const pusher = new Pusher({
     appId: '1690322',
@@ -39,7 +41,43 @@ io.on('connection',(socket)=>{
 
     // mengirim pesan dengan emit 'message'
     socket.on('message', (msg) => {
-        io.emit('message', msg)
+        let [tReceived, tPayload, lat, long, alt, sog, cog, arus, tegangan, daya, klasifikasi, ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, yaw, suhu, humidity] = msg.split(",")
+        console.log(tReceived, tPayload, lat, long,	alt, sog, cog, arus, tegangan, daya, klasifikasi, ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, yaw, suhu, humidity)
+        axios.post('http://laravel-socketio.test/api/telemetri_logs', {
+            tReceived : tReceived,
+            tPayload : tPayload,
+            lat : lat,
+            long : long,
+            alt : alt,
+            sog : sog,
+            cog : cog,
+            arus : arus,
+            tegangan : tegangan,
+            daya : daya,
+            klasifikasi : klasifikasi,
+            ax : ax,
+            ay : ay,
+            az : az,
+            gx : gx,
+            gy : gy,
+            gz : gz,
+            mx : mx,
+            my : my,
+            mz : mz,
+            roll : roll,
+            pitch : pitch,
+            yaw : yaw,
+            suhu : suhu,
+            humidity : humidity
+        })
+        // .then((response) => {
+        //     console.log(response.data);
+        //     console.log(response.status);
+        // });
+        // io.emit('message', msg);
+        // lineReader.eachLine('payload.txt', (line, last) => {  
+        //     io.emit('message', line);
+        // });
     });
 
     // mengirim pesan dengan emit 'reply'
