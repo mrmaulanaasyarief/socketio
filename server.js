@@ -209,10 +209,19 @@ io.on('connection',(socket)=>{
 
     // mengirim pesan dengan emit 'message'
     socket.on('message', (msg) => {
+        var flight_code_id = null;
+        axios.get('http://laravel-socketio.test/api/telemetri_logs/selected')
+            .then(function (response) {
+                // handle success
+                console.log(response.data.id);
+                flight_code_id = response.data.id;
+            });
+
         let [tPayload, lat, long, alt, sog, cog, arus, tegangan, daya, klasifikasi, ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, yaw, suhu, humidity] = msg.split(",")
-        console.log(tPayload, lat, long, alt, sog, cog, arus, tegangan, daya, klasifikasi, ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, yaw, suhu, humidity)
+        console.log(tPayload.replace(/;/g, ':'), lat, long, alt, sog, cog, arus, tegangan, daya, klasifikasi, ax, ay, az, gx, gy, gz, mx, my, mz, roll, pitch, yaw, suhu, humidity)
         axios.post('http://laravel-socketio.test/api/telemetri_logs', {
-            tPayload : tPayload,
+            tPayload : tPayload.replace(/;/g, ':'),
+            flight_code_id: flight_code_id,
             lat : lat,
             long : long,
             alt : alt,
@@ -236,7 +245,7 @@ io.on('connection',(socket)=>{
             yaw : yaw,
             suhu : suhu,
             humidity : humidity
-        })
+        });
     });
 
     // mengirim pesan dengan emit 'reply'
